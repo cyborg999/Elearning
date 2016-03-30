@@ -1,0 +1,286 @@
+<html>
+<head>
+	<title>Game2</title>
+	<style type="text/css">
+	* {
+		margin: 0px;
+		padding: 0px;
+		font-family: 'font1';
+	}
+
+	@font-face {
+		font-family: 'font1';
+		src:url('pbskidsheadline-regular-webfont.woff');
+	}
+	@font-face {
+		font-family: 'font2';
+		src:url('TttUCfJ272GBgSKaOaD7KltXRa8TVwTICgirnJhmVJw.woff2');
+	}
+	.left { float: left;}
+	.right{ float: right;}
+	.clear {	clear: both;}
+
+	#container {
+		background-image:url('backgroundPattern.jpg');
+		background-repeat: repeat;
+		position: absolute;
+		height: 100%;
+		width: 100%;
+	}
+	.content {
+		height: 85%;
+		width: 100%;
+	}
+	.footer {
+		height: 15%;
+		width: 100%;
+		background:url('footerBackground.png');
+		background-size: 100% 100%;
+	}
+	.content .header {
+		height: 15%;
+		width: 70%;
+		margin: auto;
+	}
+	.content .storyboard {
+		position: relative;
+		height: 85%;
+		width: 70%;
+		background-image:url("fancyBorder.png");
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		margin: auto;
+	}
+	.header button {
+		border:0px;
+		margin: 10px;
+		cursor: pointer;
+	}
+	.help {
+		background: transparent;
+		background-image:url('buttons.png');
+		background-position: -1px 60px;
+		  height: 60px;
+		  width: 139px;
+	}
+	.help:hover {
+		background-position: -141px 60px;
+	}
+	.play {
+		background: transparent;
+		background-image: url('PlayButton.png');
+		height: 53px;
+		border: 0px;
+		position: absolute;
+		bottom: 20px;
+		width: 131px;
+		left: 100px;
+		/*margin-left: 100px;*/
+		/*margin-top: 35%!important;*/
+	}
+	.play:hover {
+		background-position: 0px -54px;
+	}
+	.background2 {
+  width: 95%;
+  height: 91%;
+  background-image: url(Blastoff_GameScreen.jpg);
+  margin: auto;
+  background-size: 100% 100%;	
+  position: relative;
+  top: 20px;
+  border-radius: 15px
+	}
+	.boxes {
+		height: 30%;
+		width: 90%;
+		margin: auto;
+		background-image: url(fundingBackground.png);
+		background-size: 100% 100%;
+	}
+	.box-parent {
+		width: 50%;
+		height: 100%;
+		margin: auto;
+			position: relative;
+		top: 7px;
+	}
+	.box {
+		text-align: center;
+		width: 33%;
+		float: left;
+		height: 90%;
+		background-size: 100% 100%;
+		background-image: url(blueprint_landscape.png);
+	}
+	.background1 {
+	  width: 100%;
+	  height: 100%;
+	  background-image: url(TransitionBG.png);
+	  margin: auto;
+	  background-size: 100% 100%;	
+	  position: absolute;
+	  border-radius: 15px;
+	  z-index:2;
+	  text-align: center;
+	}
+	.background0 {
+	  width: 100%;
+	  height: 100%;
+	  background-image: url(Blastoff_Title.jpg);
+	  margin: auto;
+	  background-size: 100% 100%;	
+	  position: absolute;
+	  border-radius: 15px;
+	  z-index:3;
+	  text-align: center;
+	}
+	.hidden {
+		display: none;
+	}
+#ok {
+	background: transparent;
+  height: 65px;
+  width: 75px;
+  cursor: pointer;
+  background-image: url('OkayButton.png');
+  background-position: 0px 0px;
+  position: absolute;
+  right: 10px;
+  border: 0px;
+}
+#ok:hover {
+	background-position: 0px -65px;
+}
+	.chickens {
+		margin-top: 90%;
+		position: relative;
+		height: 70%;
+		top: 20%;
+		left: 35%;
+		width: 100%;
+		margin: auto;
+		/*background: orange;*/
+	}
+	.circle {
+		width: 100px;
+		height: 100px;
+		background: red;
+		-moz-border-radius: 50px;
+		-webkit-border-radius: 50px;
+		border-radius: 50px;
+	}
+	.square {
+			width: 100px;
+	height: 100px;
+	background: red;
+	}
+
+.mini {
+	height: 50px;
+	width: 50px;
+}
+	
+	</style>
+</head>
+<body>
+	<div id="container">
+		<div class="content">
+			<div class="header">
+				<button class="right help"></button>
+			</div>
+			<div class="storyboard">
+				<div class="background0 ">
+					<button class="left play"></button>
+				</div>
+				<div class="background1 "></div>
+				<div class="background2">
+					<button id="ok"></button>
+					<script type="text/html" id="chicken">
+							<img class="left"src="chicken.png">
+					</script>
+					<div class="chickens ">
+						<div class="all circle">
+						</div>
+					</div>
+					<div class="boxes">
+						<div class="box-parent">
+							<div class="box">
+								<div class="mini circle"></div>
+							</div>
+						
+							<div class="box">
+								<div class="mini square"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="footer"></div>
+	</div>
+	<script type="text/javascript" src="jquery-1.11.2.min.js"></script>
+	<script type="text/javascript">
+	(function($){
+		var chicken = {
+			__init 	: function(){
+				this.__listen();
+				this.randomizeData(null);
+			},
+			__listen : function(){
+				// $(".background1, .background0").hide();
+				$(".play").on("click", function(){
+					$(".background0").fadeOut("slow", function(){
+						$(this).addClass("hidden");
+
+						setTimeout(function(){
+							$(".background1").fadeOut("slow", function(){
+								$(this).addClass("hidden");
+							});
+						},1000);
+					});
+				});
+			},
+			randomizeData : function(idx){
+				var data = Array();
+
+				var p1 = {
+					count : 3,
+					square  : Array(100,100),
+					circle  : Array(200,200)
+				};
+
+				var p2 = {
+					count : 2,
+					square  : Array(100,100),
+					circle  : Array(50,70)
+				};
+
+				data.push(p1);
+				data.push(p2);
+
+
+				if(idx == null){
+					idx = Math.floor((Math.random() * data.length));
+				}
+
+				$(".all").find("img").remove();
+
+				for(var i = 0; i< data[idx].count; i++){
+					var chicken = $("#chicken").html();
+					$(".all").append(chicken);
+				}
+
+				$(".mini.circle").data("height", data[idx].circle[0]);
+				$(".mini.circle").data("width", data[idx].circle[1]);
+			
+				console.log(data, data[idx].circle[0]);
+								// console.log(data.length,idx,data);
+			}
+		}
+
+		chicken.__init();
+	})(jQuery);
+	</script>
+</body>
+</html>

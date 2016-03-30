@@ -1,0 +1,392 @@
+<html>
+<head>
+	<title>Game1</title>
+	<style type="text/css">
+	@font-face {
+		font-family: 'myFont';
+		src : url('ASafePlacetoFall.ttf');
+	}
+	* {
+		margin: 0px;
+		padding: 0px;
+		font-family: 'myFont';
+	}
+	.left {
+		float: left;
+	}
+	.right {
+		float: right;
+	}
+	.clear {
+		clear: both;
+	}
+	#container {
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+	}
+	#container .banner {
+		position: relative;
+		height: 60%;
+		width: 100%;
+		background-image: url("banner.png");
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+	}
+	#container .alphabet {
+		height: 40%;
+		background: 100%;
+		width: 100%;
+		background: rgb(200, 150, 0);
+	}
+	#container .alphabet .letter {
+		width: 16%;
+		height: 87%;
+		margin: 5px;
+		background: white;
+		border: 10px solid black;
+		border-radius: 5px;
+		font-size: 130px;
+		text-align: center;
+		cursor: pointer;
+		position: relative;
+	}
+	#container .alphabet .letter h4 {
+		margin-left: 20px;
+		margin-top: -10px;
+		text-transform: uppercase;
+		height: 100%;
+		float: left;
+		text-align: center;
+	}
+	#container .alphabet .letter h5 {
+		height: 100%;
+		margin-top: 0px;
+	}
+	#audios { display: none;}
+	.guess {
+		width: 30%;
+		box-shadow: 10px 10px 10px black;
+		background: white;
+		height: 70%;
+	}
+	.guess img {
+		width: 100%;
+		height: 100%;
+	}
+	.guessname {
+		font-size: 100px;
+		margin-left: 32%;
+		margin-top: -8%;
+		color: white;
+		text-shadow:1px 1px 10px black;
+	}
+	.guessname img {
+		float: left;
+	}
+	.guessname .what {
+		font-size: 70px;
+		color: red;
+		text-decoration: underline;
+	}
+	.hidden {
+		display: none;
+	}
+	.correct, .incorrect {
+		position: fixed;
+		top: 0px;
+		font-size: 120px;
+		left: 50%;
+		z-index: 4;
+		text-shadow: 1px 1px 40px black;
+	}
+	.incorrect {
+		color: red;
+	}
+	.correct {
+		text-shadow: 1px 1px 40px black;
+		color: green;
+	}
+	h1 {
+		position: fixed;
+		top: 30%;
+		right: 10%;
+		z-index: 5;
+		padding: 0px;
+		margin: 0px;
+		font-size: 70px;
+	}
+	h1 .score {
+		color: green;
+		text-shadow: 1px 1px 10px black;
+	}
+	h1 .wrong {
+		color: red;
+	}
+	#restart {
+		position: fixed;
+		background: rgba(0,0,0,.7);
+		padding: 20px;
+		border-bottom-right-radius: 10px;
+		border-bottom-left-radius: 10px;
+		top: -10px;
+		right: 0px;
+		font-size: 20px;
+		z-index: 2;
+		color: white;
+		text-decoration: none;
+		text-shadow: 1px 1px 10px black;
+	}
+	</style>
+</head>
+<body>
+	<div id="container">
+		<a href="" id="restart">Restart Game</a>
+		<h2 class="hidden correct">Correct!</h2>
+		<h2 class="hidden  incorrect">Wrong!</h2>
+		<h1><span class="score">0</span> / <span class="wrong">0</span></h1>
+		<div class="banner">
+			<div class="guess">
+				<img src="a-dog.jpg">
+			</div>
+			<p class="guessname"><span class="what">?</span><img class='hidden'src="yak.png"/><span class="other"></span></p>
+		</div>
+		<div class="clearfix alphabet"></div>
+	</div>
+	<div id="audios"></div>
+	<script type="text/html" id="letter">
+		<div class="letter left" data-id="[ID]">
+			<h4 class="left">[UPPERCASE]</h4>
+			<h5 class="left">[LOWERCASE]</h5>
+		</div>
+	</script>
+	<script type="text/html" id="audio">
+		<audio id="[ID]" controls>
+		  <source src="[AUDIO].ogg" type="audio/ogg">
+		Your browser does not support the audio element.
+		</audio>
+	</script>
+	<script type="text/javascript" src="jquery-1.11.2.min.js"></script>
+	<script type="text/javascript">
+	(function($){
+		var Alphabet = {
+			answer 	: null,
+			score 	: 0,
+			wrong 	: 0,
+			letters : null,
+			__init : function(){
+				this.letters = Array(
+						'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'
+					);
+				this.loadLetters(26);
+				this.__listen();
+			},
+			__listen : function(){
+				var me 		= this;
+				var letter 	= $(".letter");
+
+				$("#restart").on("click", function(e){
+					// parent.updateLearning($(".score").html(), $(".wrong").html());
+
+					me.score = 0;
+					me.wrong = 0;
+					$(".alphabet .letter").remove();
+					me.letters = Array(
+						'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'
+					);
+					
+					me.answer = null;
+
+					$(".what").html("?");
+					$(".wrong").html(me.wrong);
+					$(".score").html(me.score);
+					
+					me.loadLetters(26);
+					me.__listen();
+					e.preventDefault();
+				});
+
+				letter.on("click", function(){
+					var id 		= $(this).data("id");
+					var me2 	= $(this);
+
+					me.playAudio(id);
+					
+					
+					if(me.answer == id){
+						$(this).fadeOut(100, function(){
+							me2.remove();
+						});
+				
+						$(".guessname").find("img").removeClass("hidden");
+						$(".what").html("");
+						
+						$(".incorrect").hide();
+						$(".correct").fadeIn("slow", function(){
+							$(this).fadeOut("slow",function(){
+								me.score += 1;
+								$(".score").html(me.score);
+								
+								me.generatePreview();
+							});
+						});
+					} else {
+						$(".correct").hide();
+
+						$(".incorrect").fadeIn("slow", function(){
+							$(this).fadeOut("slow");
+			
+							me.wrong += 1;
+							$(".what").html("?");
+							$(".wrong").html(me.wrong);
+			
+							console.log(me.wrong);
+						});
+
+					}
+
+				});
+			},
+			playAudio : function(id){
+				var audio = document.getElementById(id);
+
+				audio.play();
+			},
+			getImg : function(letter){
+				switch(letter){
+					case 'a':
+						return Array("a-alligator.jpg", 'alligator.png');
+						break;
+					case 'b':
+						return Array("a-bear.jpg", 'bear.png');
+						break;
+					case 'c':
+						return Array("a-chicken.jpg", 'chicken.png');
+						break;
+					case 'd':
+						return Array("a-dog.jpg", 'dog.png');
+						break;
+					case 'e':
+						return Array("a-elephant.jpg", 'elephant.png');
+						break;
+					case 'f':
+						return Array("a-fish.jpg", 'fish.png');
+						break;
+					case 'g':
+						return Array("a-giraffe.jpg", 'giraffe.png');
+						break;
+					case 'h':
+						return Array("a-horse.jpg", 'horse.png');
+						break;
+					case 'i':
+						return Array("a-iguana.jpg", 'iguana.png');
+						break;
+					case 'j':
+						return Array("a-jellyfish.jpg", 'jellyfish.png');
+						break;
+					case 'k':
+						return Array("a-koala.jpg", 'koala.png');
+						break;
+					case 'l':
+						return Array("a-lion.jpg", 'lion.png');
+						break;
+					case 'm':
+						return Array("a-monkey.jpg", 'monkey.png');
+						break;
+					case 'n':
+						return Array("a-nighthawk.jpg", 'nighthawk.png');
+						break;
+					case 'o':
+						return Array("a-octopus.jpg", 'octopus.png');
+						break;
+					case 'p':
+						return Array("a-parrot.jpg", 'parrot.png');
+						break;
+					case 'q':
+						return Array("a-quail.jpg", 'quail.png');
+						break;
+					case 'r':
+						return Array("a-rat.jpg", 'rat.png');
+						break;
+					case 's':
+						return Array("a-snake.jpg", 'snake.png');
+						break;
+					case 't':
+						return Array("a-turtle.jpg", 'turtle.png');
+						break;
+					case 'u':
+						return Array("a-unau.jpg", 'unau.png');
+						break;
+					case 'v':
+						return Array("a-vulture.jpg", 'vulture.png');
+						break;
+					case 'w':
+						return Array("a-woodpecker.jpg", 'woodpecker.png');
+						break;
+					case 'x':
+						return Array("a-xenops.jpg", 'xenops.png');
+						break;
+					case 'y':
+						return Array("a-yak.jpg", 'yak.png');
+						break;
+					case 'z':
+						return Array("a-zebra.jpg", 'zebra.png');
+						break;
+					}
+			},
+			loadLetters : function(howMany){
+				var displayed = $(".alphabet");
+				var audios 	  = $("#audios");
+				var removed   = Array();
+
+				for(var i in this.letters) {
+					if(i < howMany){
+						var letter 	= $("#letter").html();
+						letter 		= letter.replace("[ID]", this.letters[i]).
+							replace("[UPPERCASE]", this.letters[i]).
+							replace("[LOWERCASE]", this.letters[i]);
+
+						var audio 	= $("#audio").html();
+						audio 		= audio.replace("[ID]", this.letters[i]).
+							replace("[AUDIO]", this.letters[i]);
+
+						displayed.append(letter);
+						audios.append(audio);
+					} else {
+						break;
+					}
+				}
+
+				this.generatePreview();
+			},
+			generatePreview : function(){
+				var me = this;
+				var displayed 	= $(".alphabet");
+				var idx 		= Math.floor((Math.random() * 5)) + 1;
+				var answer 		= displayed.find(".letter:nth-child("+idx+")").data("id");
+				var preview 	= this.getImg(answer);
+				var other 		= preview[1].split(".");
+				var name 		= other[0];
+
+				$(".what").html("?");
+				$(".guessname").find("img").addClass("hidden");
+
+				name 		= name.replace(name[0], '');
+				console.log(answer,preview, name);
+
+				$(".guess img").attr("src",preview[0])
+				$(".other").html(name);
+				$(".guessname img").attr("src", preview[1]);
+
+				this.answer = answer;
+
+			}
+		}
+
+		$(document).ready(function(){
+			Alphabet.__init();
+		});
+	})(jQuery);
+	</script>
+</body>
+</html>
